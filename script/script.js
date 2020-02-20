@@ -21,7 +21,11 @@ const startButton = document.querySelector('.start-button'),
       endButton = document.querySelector('.end-button'),
       total = document.querySelector('.total'),
       fastRange = document.querySelector('.fast-range'),
-      totalPriceSum = document.querySelector('.total_price__sum');
+      totalPriceSum = document.querySelector('.total_price__sum'),
+      adapt = document.getElementById('adapt'),
+      mobileTemplates = document.getElementById('mobileTemplates'),
+      typeSite = document.querySelector('.type-site'),
+      maxDeadline = document.querySelector('.max-deadline');
 
 function showElem(elem) {
   elem.style.display = 'block';
@@ -31,10 +35,19 @@ function hideElem(elem) {
   elem.style.display = 'none';
 }
 
+function renderTextContent(total, site, maxDay) {
+
+  totalPriceSum.textContent = total;
+  typeSite.textContent = site;
+  maxDeadline.textContent = maxDay;
+}
+
 function priceCalculation(elem) {
   let result = 0,
       index = 0,
-      options = [];
+      options = [],
+      site = '',
+      maxDeadlineDay = DATA.deadlineDay[index][1];
 
   if(elem.name === 'whichSite') {
     for (const item of formCalculate.elements) {
@@ -48,6 +61,8 @@ function priceCalculation(elem) {
   for (const item of formCalculate.elements){
     if(item.name === 'whichSite' && item.checked) {
       index = DATA.whichSite.indexOf(item.value);
+      site = item.dataset.site;
+      maxDeadlineDay = DATA.deadlineDay[index][1];
     }else if(item.classList.contains('calc-handler') && item.checked) {
       options.push(item.value);
     }
@@ -72,11 +87,20 @@ function priceCalculation(elem) {
 
   result += DATA.price[index];
 
-  totalPriceSum.textContent = result;
+  renderTextContent(result, site, maxDeadlineDay);
+
+ 
 }
 
 function handlerCallBackForm(e) {
   const target = e.target;
+
+  if(adapt.checked) {
+    mobileTemplates.disabled = false;
+  }else {
+    mobileTemplates.disabled = true;
+    mobileTemplates.checked = false;
+  }
 
   if(target.classList.contains('want-faster')) {
      target.checked ? showElem(fastRange) : hideElem(fastRange);
